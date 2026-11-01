@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="喵喵捕猎" />
+  <title>喵喵捕猎 CatToy (Peppy Cat iPad Edition)</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --accent-cyan: #2ef2ff;
+      --accent-yellow: #ffe82e;
+    }
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #072142;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "PingFang SC", sans-serif;
+      touch-action: none;
+    }
+    #gameCanvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+    }
+    dialog#settingsDialog {
+      border: 2px solid rgba(46, 242, 255, 0.7);
+      border-radius: 24px;
+      background: rgba(12, 20, 36, 0.96);
+      color: #fff;
+      padding: 24px 28px;
+      max-width: 540px;
+      width: calc(100vw - 40px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75);
+    }
+    dialog#settingsDialog::backdrop {
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(6px);
+    }
+    .dialog-title {
+      margin: 0 0 16px;
+      font-size: 21px;
+      font-weight: 800;
+      text-align: center;
+      color: #fff;
+    }
+    .mode-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .mode-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .mode-btn.active {
+      background: rgba(24, 128, 218, 0.9);
+      border-color: var(--accent-yellow);
+      box-shadow: 0 0 12px rgba(255, 232, 46, 0.35);
+    }
+    .toggles-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .toggle-btn {
+      padding: 11px 8px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      background: rgba(20, 110, 90, 0.85);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+    }
+    .close-btn {
+      display: block;
+      width: 240px;
+      margin: 0 auto;
+      padding: 13px 20px;
+      border-radius: 999px;
+      border: 2px solid #fff;
+      background: var(--accent-yellow);
+      color: #091326;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+
+  <dialog id="settingsDialog">
+    <h2 class="dialog-title">🐱 喵喵捕猎 (CatToy) · 家长控制中心</h2>
+    <div class="mode-list" id="modeList"></div>
+    <div class="toggles-row">
+      <button type="button" class="toggle-btn" id="btnCount">猎物数量: 2 只</button>
+      <button type="button" class="toggle-btn" id="btnSound">🔊 拟真音效: 开</button>
+      <button type="button" class="toggle-btn" id="btnAuto">🔄 90s轮换: 开</button>
+    </div>
+    <button type="button" class="close-btn" id="btnClose">返回继续逗猫 🐾</button>
+  </dialog>
+
+  <script>
+    (() => {
+      const MODES = [
+        { id: 0, title: "🐟 锦鲤池塘", subtitle: "摆尾游弋 + 水花气泡声", bg: "#082142", baseSpeed: 185, burst: 2.1, radius: 48, colors: ["#ffe026", "#33ebff", "#fff5c7"] },
+        { id: 1, title: "🐭 窜动小鼠", subtitle: "急停抖胡须 + 高频吱吱声", bg: "#1e242e", baseSpeed: 290, burst: 2.7, radius: 46, colors: ["#fae847", "#61dbff", "#f2f5fa"] },
+        { id: 2, title: "🐞 荧光甲虫", subtitle: "振翅停顿 + 咔哒虫鸣声", bg: "#0d2b1f", baseSpeed: 220, burst: 2.3, radius: 42, colors: ["#f2fa2e", "#26e0ff", "#ffc71f"] },
+        { id: 3, title: "⚡ 电光激光", subtitle: "极速折线闪现 + 电光叮当", bg: "#080a12", baseSpeed: 460, burst: 3.1, radius: 38, colors: ["#2efaff", "#fff233", "#ff3873"] },
+        { id: 4, title: "🪶 颤动羽毛", subtitle: "飘忽盘旋 + 清脆铃铛声", bg: "#121733", baseSpeed: 240, burst: 2.4, radius: 50, colors: ["#ffe638", "#40f2fa", "#ebf5ff"] }
+      ];
+
+      const PAW_FORGIVENESS = 40;
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+      const dialog = document.getElementById("settingsDialog");
+
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+      let currentModeIdx = 0;
+      let targetPreyCount = 2;
+      let isMuted = false;
+      let isAutoCycle = true;
+      let autoCycleTimer = 0;
+      let catchScore = 0;
+      let nextPreyId = 1;
+
+      let preys = [];
+      let ripples = [];
+      let particles = [];
+      let floatLabels = [];
+
+      // 2.5s 家长锁状态
+      const lockState = {
+        x: width - 46,
+        y: 46,
+        radius: 28,
+        isPressing: false,
+        pointerId: null,
+        elapsed: 0,
+        required: 2.5
+      };
+
+      // WebAudio 实时合成器
+      let audioCtx = null;
+      function ensureAudio() {
+        if (!audioCtx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (AC) audioCtx = new AC();
+        }
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+      }
+
+      function playSynthSound(modeId, isTease = false) {
+        if (isMuted) return;
+        ensureAudio();
+        if (!audioCtx) return;
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (isTease) {
+          const baseFreq = [1150, 3550, 2900, 4200, 3300][modeId] || 3000;
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(baseFreq, now);
+          osc.frequency.linearRampToValueAtTime(baseFreq + 420, now + 0.085);
+          gain.gain.setValueAtTime(0.01, now);
+          gain.gain.linearRampToValueAtTime(0.14, now + 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+          osc.start(now);
+          osc.stop(now + 0.09);
+          return;
+        }
+
+        if (modeId === 1) {
+          // 老鼠双音吱吱声
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(2750, now);
+          osc.frequency.exponentialRampToValueAtTime(4250, now + 0.09);
+          osc.frequency.setValueAtTime(2900, now + 0.11);
+          osc.frequency.exponentialRampToValueAtTime(4400, now + 0.21);
+          gain.gain.setValueAtTime(0.28, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+          osc.start(now);
+          osc.stop(now + 0.22);
+        } else if (modeId === 0) {
+          // 锦鲤气泡水花音
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(580, now);
+          osc.frequency.exponentialRampToValueAtTime(1680, now + 0.18);
+          gain.gain.setValueAtTime(0.32, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.20);
+          osc.start(now);
+          osc.stop(now + 0.20);
+        } else {
+          // 虫鸣 / 激光 / 铃铛高频谐波
+          osc.type = "sine";
+          const f0 = modeId === 2 ? 3400 : (modeId === 3 ? 4600 : 3180);
+          const f1 = modeId === 3 ? 1400 : f0 * 1.45;
+          osc.frequency.setValueAtTime(f0, now);
+          osc.frequency.exponentialRampToValueAtTime(f1, now + 0.22);
+          gain.gain.setValueAtTime(0.28, now);
+          gain.gain.exponentialRampToValueAtTime(0.008, now + 0.24);
+          osc.start(now);
+          osc.stop(now + 0.24);
+        }
+      }
+
+      // 申请屏幕常亮 WakeLock
+      async function requestWakeLock() {
+        try {
+          if ("wakeLock" in navigator) {
+            await navigator.wakeLock.request("screen");
+          }
+        } catch (_) {}
+      }
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") requestWakeLock();
+      });
+      requestWakeLock();
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        lockState.x = width - 46;
+        lockState.y = 46;
+      }
+      window.addEventListener("resize", resize);
+      resize();
+
+      function spawnPreyAtEdge() {
+        const mode = MODES[currentModeIdx];
+        const edge = Math.floor(Math.random() * 4);
+        const margin = 18;
+        const t = 0.15 + Math.random() * 0.7;
+        let x = 0, y = 0, angle = 0;
+        if (edge === 0) { x = margin; y = height * t; angle = (Math.random() - 0.5) * 0.8; }
+        else if (edge === 1) { x = width - margin; y = height * t; angle = Math.PI + (Math.random() - 0.5) * 0.8; }
+        else if (edge === 2) { x = width * t; y = height - margin; angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.8; }
+        else { x = width * t; y = margin; angle = Math.PI / 2 + (Math.random() - 0.5) * 0.8; }
+
+        return {
+          id: nextPreyId++,
+          x, y,
+          angle,
+          angularVel: 0,
+          phase: "peeking",
+          timer: 0.45 + Math.random() * 0.5,
+          age: 0,
+          wiggle: Math.random() * 6.28,
+          scale: 0.92 + Math.random() * 0.24,
+          color: mode.colors[Math.floor(Math.random() * mode.colors.length)],
+          cooldown: 0.22,
+          startleCd: 0
+        };
+      }
+
+      function syncPreyCount(reset = false) {
+        if (reset) preys = [];
+        while (preys.length > targetPreyCount) preys.pop();
+        while (preys.length < targetPreyCount) preys.push(spawnPreyAtEdge());
+      }
+      syncPreyCount(true);
+
+      function normAngleDiff(from, to) {
+        let d = (to - from) % (Math.PI * 2);
+        if (d > Math.PI) d -= Math.PI * 2;
+        if (d < -Math.PI) d += Math.PI * 2;
+        return d;
+      }
+
+      function stepPrey(p, dt) {
+        const mode = MODES[currentModeIdx];
+        p.age += dt;
+        if (p.cooldown > 0) p.cooldown = Math.max(0, p.cooldown - dt);
+        if (p.startleCd > 0) p.startleCd = Math.max(0, p.startleCd - dt);
+        p.timer -= dt;
+
+        if (p.timer <= 0) {
+          const r = Math.random();
+          const nearEdge = (p.x < 48 || p.x > width - 48 || p.y < 48 || p.y > height - 48);
+          if (p.phase === "peeking") {
+            const cx = width * (0.35 + Math.random() * 0.3);
+            const cy = height * (0.35 + Math.random() * 0.3);
+            p.angle = Math.atan2(cy - p.y, cx - p.x);
+            p.angularVel = (Math.random() - 0.5) * 1.6;
+            p.phase = "darting";
+            p.timer = 0.45 + Math.random() * 0.45;
+          } else if (p.phase === "moving") {
+            if (nearEdge && r < 0.18) {
+              p.angle = Math.atan2(height / 2 - p.y, width / 2 - p.x) + (Math.random() - 0.5) * 0.5;
+              p.angularVel = 0;
+              p.phase = "peeking";
+              p.timer = 0.40 + Math.random() * 0.45;
+            } else if (r < 0.48) {
+              p.phase = "pausing";
+              p.timer = 0.45 + Math.random() * 0.85;
+              p.angularVel = 0;
+              playSynthSound(currentModeIdx, true);
+            } else {
+              p.phase = "darting";
+              p.angle += (Math.random() - 0.5) * 1.8;
+              p.angularVel = (Math.random() - 0.5) * 2.5;
+              p.timer = 0.35 + Math.random() * 0.5;
+            }
+          } else if (p.phase === "pausing") {
+            p.phase = r < 0.65 ? "darting" : "moving";
+            p.angle += (Math.random() - 0.5) * 2.0;
+            p.angularVel = (Math.random() - 0.5) * 2.0;
+            p.timer = p.phase === "darting" ? (0.38 + Math.random() * 0.5) : (0.9 + Math.random() * 1.3);
+          } else {
+            if (r < 0.42) {
+              p.phase = "pausing";
+              p.timer = 0.4 + Math.random() * 0.7;
+              p.angularVel = 0;
+              playSynthSound(currentModeIdx, true);
+            } else {
+              p.phase = "moving";
+              p.angularVel = (Math.random() - 0.5) * 1.5;
+              p.timer = 0.85 + Math.random() * 1.4;
+            }
+          }
+        }
+
+        let speed = mode.baseSpeed;
+        let wiggleRate = 14;
+        if (p.phase === "peeking") { speed *= 0.22; wiggleRate = 9; }
+        else if (p.phase === "pausing") { speed = currentModeIdx === 0 ? speed * 0.08 : 0; wiggleRate = 22; }
+        else if (p.phase === "darting") { speed *= mode.burst; wiggleRate = 28; p.angle += p.angularVel * dt; }
+        else {
+          p.angle += Math.sin(p.age * 3.8 + p.id) * 2.8 * dt + p.angularVel * dt;
+        }
+
+        p.wiggle += wiggleRate * dt;
+
+        const pad = 54;
+        if (p.phase !== "peeking" && (p.x < pad || p.x > width - pad || p.y < pad || p.y > height - pad)) {
+          const toCenter = Math.atan2(height / 2 - p.y, width / 2 - p.x);
+          const turnStr = p.phase === "darting" ? 9.5 : 6.5;
+          p.angle += normAngleDiff(p.angle, toCenter) * Math.min(1, turnStr * dt);
+        }
+
+        const nextX = p.x + Math.cos(p.angle) * speed * dt;
+        const nextY = p.y + Math.sin(p.angle) * speed * dt;
+        p.x = Math.min(width - 14, Math.max(14, nextX));
+        p.y = Math.min(height - 14, Math.max(14, nextY));
+
+        let vx = Math.cos(p.angle);
+        let vy = Math.sin(p.angle);
+        let bounced = false;
+        if ((nextX < 14 && vx < 0) || (nextX > width - 14 && vx > 0)) { vx = -vx; bounced = true; }
+        if ((nextY < 14 && vy < 0) || (nextY > height - 14 && vy > 0)) { vy = -vy; bounced = true; }
+        if (bounced) p.angle = Math.atan2(vy, vx);
+      }
+
+      function spawnRipple(x, y, maxR = 58, alpha = 0.65) {
+        ripples.push({ x, y, r: 10, maxR, alpha });
+      }
+
+      function spawnExplosion(x, y, color) {
+        spawnRipple(x, y, 92, 0.9);
+        spawnRipple(x, y, 56, 0.75);
+        for (let i = 0; i < 12; i++) {
+          const a = (i / 12) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+          const spd = 120 + Math.random() * 180;
+          particles.push({
+            x, y,
+            vx: Math.cos(a) * spd,
+            vy: Math.sin(a) * spd,
+            r: 5 + Math.random() * 5,
+            color: i % 2 === 0 ? color : "#ffffff",
+            life: 0.38,
+            maxLife: 0.38
+          });
+        }
+        floatLabels.push({ x, y, text: "🐾 +1", life: 0.55 });
+      }
+
+      function handlePawAt(x, y, isSwipe) {
+        ensureAudio();
+        if (!isSwipe) spawnRipple(x, y, 54);
+        const mode = MODES[currentModeIdx];
+
+        for (let i = 0; i < preys.length; i++) {
+          const p = preys[i];
+          if (p.cooldown > 0) continue;
+          const hitR = mode.radius * p.scale + PAW_FORGIVENESS;
+          const dx = p.x - x;
+          const dy = p.y - y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist <= hitR) {
+            catchScore++;
+            playSynthSound(currentModeIdx, false);
+            spawnExplosion(p.x, p.y, p.color);
+            preys[i] = spawnPreyAtEdge();
+          } else if (dist < 210 && p.startleCd <= 0) {
+            let away = Math.atan2(dy, dx) + (Math.random() - 0.5) * 0.55;
+            const px = p.x + Math.cos(away) * 65;
+            const py = p.y + Math.sin(away) * 65;
+            if (px < 28 || px > width - 28 || py < 28 || py > height - 28) {
+              const toCenter = Math.atan2(height / 2 - p.y, width / 2 - p.x);
+              away += normAngleDiff(away, toCenter) * 0.75;
+            }
+            p.angle = away;
+            p.angularVel = (Math.random() - 0.5) * 2.0;
+            p.phase = "darting";
+            p.timer = 0.40 + Math.random() * 0.35;
+            p.startleCd = 0.14;
+          }
+        }
+      }
+
+      // Pointer Events 多点触控支持（多只猫爪同时拍击/滑动，且多爪误触不打断人类长按家长锁）
+      canvas.addEventListener("pointerdown", (e) => {
+        if (dialog.open) return;
+        const dLock = Math.hypot(e.clientX - lockState.x, e.clientY - lockState.y);
+        if (dLock <= 40) {
+          if (!lockState.isPressing) {
+            lockState.isPressing = true;
+            lockState.pointerId = e.pointerId;
+            lockState.elapsed = 0;
+          }
+          spawnRipple(lockState.x, lockState.y, 36);
+          return;
+        }
+        handlePawAt(e.clientX, e.clientY, false);
+      });
+
+      canvas.addEventListener("pointermove", (e) => {
+        if (dialog.open) return;
+        if (lockState.isPressing && e.pointerId === lockState.pointerId) {
+          if (Math.hypot(e.clientX - lockState.x, e.clientY - lockState.y) > 48) {
+            lockState.isPressing = false;
+            lockState.pointerId = null;
+            lockState.elapsed = 0;
+          }
+          return;
+        }
+        if (e.pressure > 0 || e.pointerType === "touch") {
+          handlePawAt(e.clientX, e.clientY, true);
+        }
+      });
+
+      const cancelLock = (e) => {
+        if (lockState.isPressing && e.pointerId === lockState.pointerId) {
+          lockState.isPressing = false;
+          lockState.pointerId = null;
+          lockState.elapsed = 0;
+        }
+      };
+      canvas.addEventListener("pointerup", cancelLock);
+      canvas.addEventListener("pointercancel", cancelLock);
+
+      function drawBackgroundDecorations() {
+        if (currentModeIdx === 0) {
+          // 池塘睡莲叶
+          for (let i = 0; i < 5; i++) {
+            const r = 34 + (i % 3) * 14;
+            const px = width * (0.15 + i * 0.18);
+            const py = height * (i % 2 === 0 ? 0.22 : 0.76);
+            ctx.fillStyle = "rgba(20, 92, 71, 0.38)";
+            ctx.strokeStyle = "rgba(56, 166, 122, 0.45)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(px, py, r, 0.15, Math.PI * 1.9);
+            ctx.lineTo(px, py);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+          }
+        } else if (currentModeIdx === 2) {
+          // 草丛暗纹叶片
+          ctx.fillStyle = "rgba(23, 71, 46, 0.42)";
+          for (let i = 0; i < 8; i++) {
+            const px = width * (0.12 + (i % 4) * 0.25);
+            const py = height * (i < 4 ? 0.20 : 0.80);
+            ctx.save();
+            ctx.translate(px, py);
+            ctx.rotate(i * 0.7);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 45, 11, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        } else {
+          // 微弱参考点阵
+          ctx.fillStyle = "rgba(255, 255, 255, 0.07)";
+          for (let row = 1; row <= 3; row++) {
+            for (let col = 1; col <= 4; col++) {
+              ctx.beginPath();
+              ctx.arc((width * col) / 5, (height * row) / 4, 3, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+        }
+      }
+
+      // 渲染单只猎物（完整复刻 PreyNode.swift 的多关节矢量细节）
+      function drawPrey(p) {
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle);
+        ctx.scale(p.scale, p.scale);
+
+        const swing = Math.sin(p.wiggle);
+        ctx.fillStyle = p.color;
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+
+        if (currentModeIdx === 0) {
+          // 🐟 锦鲤：胸鳍 + 摆尾 + 鱼身 + 背斑与双眼
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = 0.75;
+          for (const s of [-1, 1]) {
+            ctx.beginPath();
+            ctx.moveTo(8, s * 14);
+            ctx.quadraticCurveTo(4, s * 28, -10, s * 30);
+            ctx.quadraticCurveTo(-8, s * 18, -4, s * 12);
+            ctx.closePath();
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+          // 摆动鱼尾
+          ctx.beginPath();
+          ctx.moveTo(-24, 0);
+          ctx.lineTo(-52, swing * 16 + 13);
+          ctx.lineTo(-42, swing * 12);
+          ctx.lineTo(-52, swing * 16 - 13);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          // 鱼身
+          ctx.beginPath();
+          ctx.ellipse(4, 0, 32, 16, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          // 背斑与双眼
+          ctx.fillStyle = "rgba(13, 46, 89, 0.85)";
+          ctx.beginPath();
+          ctx.ellipse(6, 0, 10, 9, 0, 0, Math.PI * 2);
+          ctx.arc(26, 8, 3, 0, Math.PI * 2);
+          ctx.arc(26, -8, 3, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (currentModeIdx === 1) {
+          // 🐭 小老鼠：长尾巴 + 鼠身 + 双耳/鼻尖/双眼 + 6根抖动胡须
+          ctx.beginPath();
+          ctx.moveTo(-24, 0);
+          ctx.bezierCurveTo(-38, swing * 12, -52, -swing * 15, -66, swing * 20);
+          ctx.lineWidth = 4.5;
+          ctx.lineCap = "round";
+          ctx.strokeStyle = p.color;
+          ctx.stroke();
+
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = "#ffffff";
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.ellipse(2, 0, 29, 17, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          // 耳朵、鼻尖与眼睛
+          ctx.fillStyle = "rgba(30, 140, 242, 0.95)";
+          for (const s of [-1, 1]) {
+            ctx.beginPath();
+            ctx.ellipse(14, s * 18, 8, 7, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(22, s * 7, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.beginPath();
+          ctx.arc(33, 0, 4, 0, Math.PI * 2);
+          ctx.fill();
+
+          // 6根胡须
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.92)";
+          ctx.lineWidth = 1.6;
+          for (const s of [-1, 1]) {
+            for (let idx = -1; idx <= 1; idx++) {
+              ctx.beginPath();
+              ctx.moveTo(28, s * 5);
+              ctx.lineTo(34 + idx * 3, s * 22 + idx * 6 + swing * 4.5 * s);
+              ctx.stroke();
+            }
+          }
+        } else if (currentModeIdx === 2) {
+          // 🐞 荧光甲虫：6条步足 + 触角 + 振翅 + 虫身斑点
+          const legSwing = swing * 5.5;
+          ctx.strokeStyle = p.color;
+          ctx.lineWidth = 2.4;
+          ctx.lineCap = "round";
+          for (const s of [-1, 1]) {
+            ctx.beginPath();
+            ctx.moveTo(24, s * 5);
+            ctx.quadraticCurveTo(34, s * 6, 40, s * 16 + legSwing);
+            ctx.stroke();
+            for (let i = -1; i <= 1; i++) {
+              const bx = i * 10;
+              const off = i % 2 === 0 ? legSwing : -legSwing;
+              ctx.beginPath();
+              ctx.moveTo(bx, s * 15);
+              ctx.lineTo(bx + off, s * 28);
+              ctx.stroke();
+            }
+          }
+          if (p.phase === "pausing" || p.phase === "darting") {
+            const wingH = Math.abs(swing) * 7 + 3;
+            ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+            ctx.lineWidth = 1.4;
+            for (const s of [-1, 1]) {
+              ctx.beginPath();
+              ctx.ellipse(-6, s * (4 + wingH), 15, wingH, 0, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.stroke();
+            }
+          }
+          ctx.fillStyle = p.color;
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, 24, 19, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = "#0a1428";
+          ctx.beginPath();
+          ctx.ellipse(22, 0, 7, 11, 0, 0, Math.PI * 2);
+          ctx.arc(-4, 8, 4.2, 0, Math.PI * 2);
+          ctx.arc(-4, -8, 4.2, 0, Math.PI * 2);
+          ctx.arc(-15, 6, 3.5, 0, Math.PI * 2);
+          ctx.arc(-15, -6, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (currentModeIdx === 3) {
+          // ⚡ 电光激光：动态拖尾 + 脉冲光晕 + 高亮白核
+          ctx.strokeStyle = p.color;
+          ctx.globalAlpha = 0.75;
+          ctx.lineWidth = 6;
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(-36 - Math.abs(swing) * 18, swing * 8);
+          ctx.stroke();
+
+          const pulse = 1 + 0.2 * swing;
+          ctx.scale(pulse, pulse);
+          ctx.globalAlpha = 0.38;
+          ctx.beginPath();
+          ctx.arc(0, 0, 22, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(0, 0, 10, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          // 🪶 颤动羽毛：飘带尾 + 羽片 + 羽轴与亮青小铃铛
+          ctx.strokeStyle = p.color;
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(-36, 0);
+          ctx.quadraticCurveTo(-52, -swing * 16, -68, swing * 22);
+          ctx.stroke();
+
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(4, 0, 36, 15, swing * 0.14, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(-42, 0);
+          ctx.lineTo(36, 0);
+          ctx.stroke();
+
+          ctx.fillStyle = "#33f2ff";
+          ctx.beginPath();
+          ctx.arc(-35, 0, 6.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // 家长设置弹窗交互
+      function openSettings() {
+        const list = document.getElementById("modeList");
+        list.innerHTML = "";
+        MODES.forEach((m, idx) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "mode-btn" + (idx === currentModeIdx ? " active" : "");
+          btn.innerHTML = `<span>${m.title}</span><small style="opacity:0.8">${m.subtitle}</small>`;
+          btn.onclick = () => {
+            currentModeIdx = idx;
+            autoCycleTimer = 0;
+            syncPreyCount(true);
+            playSynthSound(currentModeIdx, false);
+            openSettings();
+          };
+          list.appendChild(btn);
+        });
+        document.getElementById("btnCount").textContent = `猎物数量: ${targetPreyCount} 只`;
+        document.getElementById("btnSound").textContent = isMuted ? "🔇 拟真音效: 关" : "🔊 拟真音效: 开";
+        document.getElementById("btnAuto").textContent = isAutoCycle ? "🔄 90s轮换: 开" : "⏹ 90s轮换: 关";
+        if (!dialog.open) dialog.showModal();
+      }
+
+      document.getElementById("btnCount").onclick = () => {
+        const opts = [1, 2, 3, 5];
+        targetPreyCount = opts[(opts.indexOf(targetPreyCount) + 1) % opts.length];
+        syncPreyCount(false);
+        openSettings();
+      };
+      document.getElementById("btnSound").onclick = () => {
+        isMuted = !isMuted;
+        if (!isMuted) playSynthSound(currentModeIdx, false);
+        openSettings();
+      };
+      document.getElementById("btnAuto").onclick = () => {
+        isAutoCycle = !isAutoCycle;
+        openSettings();
+      };
+      document.getElementById("btnClose").onclick = () => dialog.close();
+
+      let lastTime = performance.now();
+      let ambientTimer = 0;
+      function animate(now) {
+        const dt = Math.min(0.1, Math.max(0.001, (now - lastTime) / 1000));
+        lastTime = now;
+
+        const mode = MODES[currentModeIdx];
+        ctx.fillStyle = mode.bg;
+        ctx.fillRect(0, 0, width, height);
+        drawBackgroundDecorations();
+
+        if (lockState.isPressing) {
+          lockState.elapsed += dt;
+          if (lockState.elapsed >= lockState.required) {
+            lockState.isPressing = false;
+            lockState.pointerId = null;
+            lockState.elapsed = 0;
+            playSynthSound(4, false);
+            openSettings();
+          }
+        }
+
+        if (!dialog.open) {
+          if (isAutoCycle) {
+            autoCycleTimer += dt;
+            if (autoCycleTimer >= 90) {
+              autoCycleTimer = 0;
+              currentModeIdx = (currentModeIdx + 1) % MODES.length;
+              syncPreyCount(true);
+            }
+          }
+          for (const p of preys) stepPrey(p, dt);
+
+          ambientTimer += dt;
+          if (ambientTimer >= 0.32 && preys.length > 0) {
+            ambientTimer = 0;
+            const rp = preys[Math.floor(Math.random() * preys.length)];
+            if (currentModeIdx === 0 && rp.phase !== "pausing") {
+              spawnRipple(rp.x, rp.y, 42, 0.32);
+            } else if (currentModeIdx === 3) {
+              particles.push({
+                x: rp.x, y: rp.y, vx: 0, vy: 0, r: 5,
+                color: "#40faff", life: 0.28, maxLife: 0.28
+              });
+            }
+          }
+        }
+
+        // 水波纹
+        for (let i = ripples.length - 1; i >= 0; i--) {
+          const rp = ripples[i];
+          rp.r += (rp.maxR - 10) * dt * 2.1;
+          rp.alpha -= dt * 1.3;
+          if (rp.alpha <= 0) { ripples.splice(i, 1); continue; }
+          ctx.strokeStyle = `rgba(115, 235, 255, ${rp.alpha})`;
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // 猎物
+        for (const p of preys) drawPrey(p);
+
+        // 粒子
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const pt = particles[i];
+          pt.x += pt.vx * dt;
+          pt.y += pt.vy * dt;
+          pt.life -= dt;
+          if (pt.life <= 0) { particles.splice(i, 1); continue; }
+          ctx.globalAlpha = pt.life / pt.maxLife;
+          ctx.fillStyle = pt.color;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+
+        // 浮动 +1
+        for (let i = floatLabels.length - 1; i >= 0; i--) {
+          const fl = floatLabels[i];
+          fl.y -= 85 * dt;
+          fl.life -= dt;
+          if (fl.life <= 0) { floatLabels.splice(i, 1); continue; }
+          ctx.fillStyle = `rgba(255, 240, 60, ${fl.life / 0.55})`;
+          ctx.font = "800 24px -apple-system, sans-serif";
+          ctx.fillText(fl.text, fl.x - 28, fl.y);
+        }
+
+        // 顶部状态 HUD 与右上角家长锁
+        ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
+        ctx.font = "700 17px -apple-system, sans-serif";
+        ctx.fillText(`🐾 捕获 ${catchScore}   |   ${mode.title}`, 24, 38);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.38)";
+        ctx.font = "600 13px -apple-system, sans-serif";
+        ctx.fillText(`自动轮换: ${isAutoCycle ? "开" : "关"} · 右上角长按 2.5 秒唤出家长菜单`, 24, 60);
+
+        ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(lockState.x, lockState.y, lockState.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        if (lockState.isPressing) {
+          const prog = Math.min(1, lockState.elapsed / lockState.required);
+          ctx.strokeStyle = "#2ef2ff";
+          ctx.lineWidth = 4.5;
+          ctx.beginPath();
+          ctx.arc(lockState.x, lockState.y, lockState.radius + 3, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * prog);
+          ctx.stroke();
+        }
+
+        ctx.font = "20px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#fff";
+        ctx.fillText("🔒", lockState.x, lockState.y);
+        ctx.textAlign = "start";
+        ctx.textBaseline = "alphabetic";
+
+        requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+    })();
+  </script>
+</body>
+</html>
