@@ -1,0 +1,24 @@
+{
+  "outputDirectory": "web",
+  "headers": [
+    {
+      "source": "/CatToy.mobileconfig",
+      "headers": [
+        { "key": "Content-Type", "value": "application/x-apple-aspen-config" },
+        { "key": "Content-Disposition", "value": "attachment; filename=\"CatToy.mobileconfig\"" }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        { "key": "Content-Type", "value": "application/manifest+json; charset=utf-8" }
+      ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    }
+  ]
+}

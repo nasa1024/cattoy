@@ -34,13 +34,14 @@ if [[ "${1:-}" == "--web" ]]; then
   exec python3 -m http.server 8765
 fi
 
-# 1. 动态生成最新的 CatToy.mobileconfig（包含局域网全屏版 + 100% 纯离线内嵌版）
+# 1. 动态生成最新的 CatToy.mobileconfig（包含 playcattoy.com 全屏版 + 100% 纯离线内嵌版）
 echo "📦 正在构建全屏 WebClip 描述文件 (CatToy.mobileconfig)..."
-PROJECT_DIR_ENV="$PROJECT_DIR" LAN_IP_ENV="$LAN_IP" python3 - << 'EOF'
+WEB_URL="${WEB_URL:-https://playcattoy.com/}"
+PROJECT_DIR_ENV="$PROJECT_DIR" WEB_URL_ENV="$WEB_URL" python3 - << 'EOF'
 import os, plistlib, base64
 
 project_dir = os.environ["PROJECT_DIR_ENV"]
-lan_ip = os.environ["LAN_IP_ENV"]
+web_url = os.environ["WEB_URL_ENV"]
 
 with open(os.path.join(project_dir, "web/icon.png"), "rb") as f:
     icon_png = f.read()
@@ -58,14 +59,14 @@ profile = {
             "IgnoreManifestScope": True,
             "IsRemovable": True,
             "Label": "喵喵捕猎",
-            "PayloadDescription": "喵喵捕猎 (Peppy Cat 风格 iPad 宠物互动全屏游戏)",
+            "PayloadDescription": "喵喵捕猎 (Peppy Cat 风格 iPad 宠物互动全屏游戏 - playcattoy.com)",
             "PayloadDisplayName": "喵喵捕猎 (全屏版)",
             "PayloadIdentifier": "com.cattoy.peppycat.webclip.fullscreen",
             "PayloadType": "com.apple.webClip.managed",
             "PayloadUUID": "A1B2C3D4-E5F6-4789-9012-3456789ABC01",
             "PayloadVersion": 1,
             "Precomposed": True,
-            "URL": f"http://{lan_ip}:8765/index.html",
+            "URL": web_url,
         },
         {
             "FullScreen": True,
@@ -83,10 +84,10 @@ profile = {
             "URL": data_url,
         }
     ],
-    "PayloadDescription": "在 iPad 桌面安装「喵喵捕猎」全屏猫咪捕猎游戏图标（含 100% 离线版）",
+    "PayloadDescription": "在 iPad 桌面安装「喵喵捕猎 (playcattoy.com)」全屏猫咪捕猎游戏图标（含 100% 离线版）",
     "PayloadDisplayName": "喵喵捕猎 (CatToy iPad 专享版)",
     "PayloadIdentifier": "com.cattoy.peppycat.profile",
-    "PayloadOrganization": "CatToy Studio",
+    "PayloadOrganization": "CatToy Studio (playcattoy.com)",
     "PayloadRemovalDisallowed": False,
     "PayloadType": "Configuration",
     "PayloadUUID": "F1E2D3C4-B5A6-4987-8012-3456789ABCDE",

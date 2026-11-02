@@ -1,0 +1,9 @@
+/CatToy.mobileconfig
+  Content-Type: application/x-apple-aspen-config
+  Content-Disposition: attachment; filename="CatToy.mobileconfig"
+
+/manifest.webmanifest
+  Content-Type: application/manifest+json; charset=utf-8
+
+/sw.js
+  Cache-Control: no-cache

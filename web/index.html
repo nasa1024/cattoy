@@ -3,10 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#072142" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="喵喵捕猎" />
-  <title>喵喵捕猎 CatToy (Peppy Cat iPad Edition)</title>
+  <meta name="description" content="专为宠物猫咪双色视觉神经（450nm 蓝光 / 554nm 黄绿光）设计的 iPad / 平板全屏互动捕猎游戏。支持锦鲤、小鼠、甲虫、激光、逗猫棒 5 大模式与实时高频拟声合成。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://playcattoy.com/" />
+  <meta property="og:title" content="喵喵捕猎 CatToy — 宠物猫咪全屏互动游戏" />
+  <meta property="og:description" content="基于猫咪双色视觉科学打造的 iPad 全屏逗猫游戏，打开即玩，支持添加到主屏幕 100% 离线全屏运行。" />
+  <meta property="og:image" content="https://playcattoy.com/icon.png" />
+  <link rel="canonical" href="https://playcattoy.com/" />
+  <link rel="icon" type="image/png" href="/icon.png" />
+  <link rel="apple-touch-icon" href="/icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <title>喵喵捕猎 CatToy — 宠物猫咪全屏互动游戏 (playcattoy.com)</title>
   <style>
     :root {
       color-scheme: dark;
@@ -84,7 +96,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
     .toggle-btn {
       padding: 11px 8px;
@@ -96,6 +108,22 @@
       font-weight: 600;
       cursor: pointer;
       text-align: center;
+    }
+    .install-tip {
+      margin-bottom: 18px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(46, 242, 255, 0.1);
+      border: 1px dashed rgba(46, 242, 255, 0.45);
+      font-size: 13px;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.88);
+      text-align: center;
+    }
+    .install-tip a {
+      color: var(--accent-yellow);
+      font-weight: 700;
+      text-decoration: underline;
     }
     .close-btn {
       display: block;
@@ -115,13 +143,16 @@
 <body>
   <canvas id="gameCanvas"></canvas>
 
-  <dialog id="settingsDialog">
-    <h2 class="dialog-title">🐱 喵喵捕猎 (CatToy) · 家长控制中心</h2>
+  <dialog id="settingsDialog" closedby="any" aria-labelledby="dialogTitle">
+    <h2 class="dialog-title" id="dialogTitle">🐱 喵喵捕猎 (CatToy) · 家长控制中心</h2>
     <div class="mode-list" id="modeList"></div>
     <div class="toggles-row">
       <button type="button" class="toggle-btn" id="btnCount">猎物数量: 2 只</button>
       <button type="button" class="toggle-btn" id="btnSound">🔊 拟真音效: 开</button>
       <button type="button" class="toggle-btn" id="btnAuto">🔄 90s轮换: 开</button>
+    </div>
+    <div class="install-tip" id="installTip">
+      📲 <b>全屏防误触秘籍</b>：在 Safari 点击「分享 → 添加到主屏幕」，或直接安装 <a href="/CatToy.mobileconfig" download="CatToy.mobileconfig">iPad 全屏离线描述文件</a>，即可无地址栏全屏逗猫！
     </div>
     <button type="button" class="close-btn" id="btnClose">返回继续逗猫 🐾</button>
   </dialog>
@@ -742,7 +773,31 @@
         document.getElementById("btnCount").textContent = `猎物数量: ${targetPreyCount} 只`;
         document.getElementById("btnSound").textContent = isMuted ? "🔇 拟真音效: 关" : "🔊 拟真音效: 开";
         document.getElementById("btnAuto").textContent = isAutoCycle ? "🔄 90s轮换: 开" : "⏹ 90s轮换: 关";
+        const isStandalone = window.matchMedia("(display-mode: fullscreen), (display-mode: standalone)").matches || navigator.standalone === true || location.protocol === "data:";
+        const installTipEl = document.getElementById("installTip");
+        if (installTipEl) installTipEl.style.display = isStandalone ? "none" : "block";
         if (!dialog.open) dialog.showModal();
+      }
+
+      if (!("closedBy" in HTMLDialogElement.prototype)) {
+        dialog.addEventListener("click", (event) => {
+          if (event.target !== dialog) return;
+          const rect = dialog.getBoundingClientRect();
+          const isDialogContent = (
+            rect.top <= event.clientY &&
+            event.clientY <= rect.top + rect.height &&
+            rect.left <= event.clientX &&
+            event.clientX <= rect.left + rect.width
+          );
+          if (isDialogContent) return;
+          dialog.close();
+        });
+      }
+
+      if ("serviceWorker" in navigator && (location.protocol === "https:" || location.protocol === "http:")) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
+        });
       }
 
       document.getElementById("btnCount").onclick = () => {

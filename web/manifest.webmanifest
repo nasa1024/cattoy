@@ -1,0 +1,29 @@
+{
+  "id": "/",
+  "name": "喵喵捕猎 CatToy — 宠物猫咪全屏互动游戏",
+  "short_name": "喵喵捕猎",
+  "description": "基于猫咪双色视觉科学（450nm 蓝光 / 554nm 黄绿光）设计的 iPad / 平板全屏互动逗猫游戏，内置实时合成高频拟声与防误触家长锁。",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "any",
+  "background_color": "#072142",
+  "theme_color": "#072142",
+  "lang": "zh-CN",
+  "categories": ["games", "entertainment", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

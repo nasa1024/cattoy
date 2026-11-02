@@ -10,11 +10,25 @@
 </p>
 
 <p align="center">
+  <a href="https://playcattoy.com"><img src="https://img.shields.io/badge/🌐_Online_Website-playcattoy.com-FFE600?style=for-the-badge&logoColor=000000" alt="Website" /></a>
+  <a href="https://playcattoy.com/play/"><img src="https://img.shields.io/badge/🐾_Play_Now-playcattoy.com%2Fplay-00E5FF?style=for-the-badge&logoColor=000000" alt="Play Now" /></a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Platform-iPadOS%2013.0%2B%20%7C%20Web%20PWA-00E5FF?style=flat-square" alt="Platform" />
   <img src="https://img.shields.io/badge/Engine-SpriteKit%20%2B%20AVAudioEngine-FFE600?style=flat-square" alt="Engine" />
   <img src="https://img.shields.io/badge/Frame%20Rate-60%20%2F%20120Hz%20ProMotion-76FF03?style=flat-square" alt="FPS" />
   <img src="https://img.shields.io/badge/Tests-746%20Assertions%20Passing-00E676?style=flat-square" alt="Tests" />
 </p>
+
+---
+
+## 🌐 在线立即体验（免安装 · 支持 iPad / 平板 / 手机全屏）
+
+- **🏠 官方网站（设计初衷与色彩科学介绍）**：[https://playcattoy.com](https://playcattoy.com)
+- **🎮 全屏逗猫游乐场（即开即玩）**：[https://playcattoy.com/play/](https://playcattoy.com/play/)
+  - 🐟 [锦鲤池塘 (`?mode=0`)](https://playcattoy.com/play/?mode=0) · 🐭 [窜动小老鼠 (`?mode=1`)](https://playcattoy.com/play/?mode=1) · 🐞 [荧光飞虫 (`?mode=2`)](https://playcattoy.com/play/?mode=2) · 🔵 [电光逗猫棒 (`?mode=3`)](https://playcattoy.com/play/?mode=3) · 🪶 [逗猫仙女棒 (`?mode=4`)](https://playcattoy.com/play/?mode=4)
+- **📲 iPad 全屏桌面图标一键安装描述文件**：[https://playcattoy.com/CatToy.mobileconfig](https://playcattoy.com/CatToy.mobileconfig)（在 iPad Safari 中点击或通过「分享 -> 添加到主屏幕」即可全屏无地址栏畅玩）
 
 ---
 
