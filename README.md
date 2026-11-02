@@ -1,12 +1,12 @@
-# 🐾 喵喵捕猎 (CatToy) — Peppy Cat 风格 iPad 宠物猫咪互动捕猎游戏
+# 🐾 CatToy — Feline Dichromatic Vision & Biomimetic Hunting Playground for iPad
 
 <p align="center">
   <img src="web/icon.png" width="128" height="128" alt="CatToy Icon" />
 </p>
 
 <p align="center">
-  <b>专为宠物猫咪视觉神经与捕猎天性设计的 iPad 全屏互动游戏</b><br/>
-  基于猫咪双色视觉科学（450nm 蓝光 / 554nm 黄绿光）· 仿生走停变速 AI · 纯代码实时高频拟声合成 · 多爪防误触
+  <b>A Fullscreen Interactive iPad Game Engineered Around Feline Visual Neuroscience & Predatory Ethology</b><br/>
+  Calibrated for Feline Dichromatic Retinas (450nm Cyan / 554nm Yellow) · Stop-and-Dart Bio-AI · Zero-Asset Procedural Audio Synth · Multi-Paw Safe
 </p>
 
 <p align="center">
@@ -19,175 +19,179 @@
   <img src="https://img.shields.io/badge/Engine-SpriteKit%20%2B%20AVAudioEngine-FFE600?style=flat-square" alt="Engine" />
   <img src="https://img.shields.io/badge/Frame%20Rate-60%20%2F%20120Hz%20ProMotion-76FF03?style=flat-square" alt="FPS" />
   <img src="https://img.shields.io/badge/Tests-746%20Assertions%20Passing-00E676?style=flat-square" alt="Tests" />
+  <img src="https://img.shields.io/badge/Accessibility-WCAG%20AAA-47F3FF?style=flat-square" alt="WCAG AAA" />
+</p>
+
+<p align="center">
+  <b>English</b> · <a href="README.zh-CN.md">简体中文</a>
 </p>
 
 ---
 
-## 🌐 在线立即体验（免安装 · 支持 iPad / 平板 / 手机全屏）
+## 🌐 Live Online Playground (Instant Play · 10 Languages Supported)
 
-- **🏠 官方网站（设计初衷与色彩科学介绍）**：[https://playcattoy.com](https://playcattoy.com)
-- **🎮 全屏逗猫游乐场（即开即玩）**：[https://playcattoy.com/play/](https://playcattoy.com/play/)
-  - 🐟 [锦鲤池塘 (`?mode=0`)](https://playcattoy.com/play/?mode=0) · 🐭 [窜动小老鼠 (`?mode=1`)](https://playcattoy.com/play/?mode=1) · 🐞 [荧光飞虫 (`?mode=2`)](https://playcattoy.com/play/?mode=2) · 🔵 [电光逗猫棒 (`?mode=3`)](https://playcattoy.com/play/?mode=3) · 🪶 [逗猫仙女棒 (`?mode=4`)](https://playcattoy.com/play/?mode=4)
-- **📲 iPad 全屏桌面图标一键安装描述文件**：[https://playcattoy.com/CatToy.mobileconfig](https://playcattoy.com/CatToy.mobileconfig)（在 iPad Safari 中点击或通过「分享 -> 添加到主屏幕」即可全屏无地址栏畅玩）
-
----
-
-## ✨ 项目简介
-
-**喵喵捕猎 (CatToy)** 是一款受经典猫咪游戏 *Peppy Cat* 启发、专为 iPad 打造的宠物猫咪互动娱乐应用。
-
-本项目完全采用 **零外部图片与音频素材依赖（Zero-Asset Procedural Architecture）** 架构：所有游鱼、老鼠、甲虫、激光与羽毛的骨骼摆动动画、爆裂粒子特效，以及能精准引起猫咪竖耳反应的高频吱吱声、水花气泡声、振翅声和铃铛声，全部由实时数学波形与矢量渲染生成。
-
-项目同时包含：
-1. **原生 iPadOS SpriteKit 工程 (`CatToy/`)**：基于 `UIKit + SpriteKit + AVAudioEngine`，支持 120Hz ProMotion 极速帧率与 10 指/多爪并发触控。
-2. **全屏离线 WebClip / PWA 引擎 (`web/`)**：单文件 100% 离线可运行的高帧率 Canvas + WebAudio 实现，支持通过 USB (`MobileDevice.framework`) 直接向任何 iPad 推送**永不过期、断网可用的全屏桌面图标**。
+- **🏠 Official Website (Vision Science & Ethology Overview)**: [https://playcattoy.com](https://playcattoy.com)
+- **🎮 Fullscreen Hunting Playground (Instant Web / PWA)**: [https://playcattoy.com/play/](https://playcattoy.com/play/)
+  - 🐟 [Koi Pond (`?mode=0`)](https://playcattoy.com/play/?mode=0) · 🐭 [Scurrying Mice (`?mode=1`)](https://playcattoy.com/play/?mode=1) · 🐞 [Glow Beetles (`?mode=2`)](https://playcattoy.com/play/?mode=2) · ⚡ [Electric Laser (`?mode=3`)](https://playcattoy.com/play/?mode=3) · 🪶 [Feather Wand (`?mode=4`)](https://playcattoy.com/play/?mode=4)
+- **📲 iPad Fullscreen WebClip Profile**: [https://playcattoy.com/CatToy.mobileconfig](https://playcattoy.com/CatToy.mobileconfig) (Open in iPad Safari or use *Share → Add to Home Screen* for 100% edge-to-edge offline fullscreen play)
 
 ---
 
-## 🧬 核心设计原理
+## ✨ Overview
 
-### 1. 猫咪双色视觉色彩科学（Cat-Vision Dichromatic Palette）
-人类拥有红、绿、蓝三原色视锥细胞，而猫科动物属于**红绿色盲（双色视觉，Dichromacy）**，其视网膜仅对两个波段高度敏感：
-- **蓝紫光波段（~450 nm）**
-- **黄绿光波段（~554 nm）**
+**CatToy** is an interactive iPad hunting playground inspired by classic feline games like *Peppy Cat*, engineered from the ground up around **feline visual physiology** and **predatory ethology**.
 
-普通的红色激光点在猫咪眼中实际上只是暗淡的灰褐色。因此，**CatToy** 摒弃了对猫咪无效的纯红配色，专为猫咪视网膜调校了高对比度深色背景与高亮黄（`#FFE600`）、电光青（`#00E5FF`）、荧光黄绿（`#C6FF00`）猎物配色，让猎物在猫咪视野中呈现最鲜明的视觉刺激。
+The project features a **Zero-Asset Procedural Architecture**: every swimming koi, scurrying mouse, glowing beetle, laser trail, feather plume, particle burst, and high-frequency acoustic stimulus (squeaks, water bubbles, wing buzzes, and bell harmonics) is synthesized mathematically in real time without external image or audio files.
 
-### 2. 5 大经典捕猎模式（支持 90 秒自动轮换）
+This repository includes two complete implementations:
+1. **Native iPadOS SpriteKit App (`CatToy/`)**: Built with `UIKit + SpriteKit + AVAudioEngine`, supporting 120Hz ProMotion frame rates and 10-point multi-paw touch concurrency.
+2. **Fullscreen Offline WebClip & PWA Engine (`web/`)**: A zero-dependency HTML5 Canvas + WebAudio engine that can be pushed directly to any iPad over USB (`MobileDevice.framework`) as a **permanent, never-expiring, 100% offline fullscreen Home Screen app**.
 
-| 模式 | 猎物名称 | 视觉与解剖细节 | 运动特征与粒子反馈 | 实时合成音效 |
+---
+
+## 🧬 Core Scientific & Design Principles
+
+### 1. Feline Dichromatic Vision Science (450nm & 554nm)
+While humans have trichromatic vision (red, green, blue cones), felids are **red-green colorblind (dichromatic)**. Their retinal cones peak at two specific wavelengths:
+- **S-cones (Blue-Violet / Cyan)**: `~450 nm`
+- **M/L-cones (Greenish-Yellow)**: `~554 nm`
+
+Conventional bright red (`650nm`) laser pointers appear as dull olive-gray shadows to cats. **CatToy** eliminates ineffective reds and renders all prey in high-luminance solar yellow (`#FFE600`), electric cyan (`#00E5FF`), and bioluminescent chartreuse (`#C6FF00`) against abyssal dark backgrounds for maximum retinal contrast.
+
+### 2. Five Biomimetic Hunting Modes (with 90s Auto-Rotation)
+
+| Mode | Prey Target | Procedural Anatomy & Visuals | Kinematics & Particle Feedback | Real-Time Procedural Audio Synth |
 | :--- | :--- | :--- | :--- | :--- |
-| 🐟 **Koi Pond** | **锦鲤池塘** | 流线型鱼身、双侧胸鳍、高对比度鱼眼、背部斑纹与正弦摆动分节尾鳍 | 优雅游弋、受惊加速冲刺；拍中炸开双层水波纹与上升气泡粒子 | 带通滤波水花声 + 上升变频气泡音 (`520Hz → 1500Hz`) |
-| 🐭 **Scurrying Mice** | **窜动小老鼠** | 水滴形身体、粉内耳、亮青鼻尖、6 根高频抖动胡须、S 型分节长尾 | 典型啮齿动物“急停抖须 → 爆发窜出”步态；拍中炸开亮黄/电光蓝星火 | 高频调频正弦吱吱声 (`2900Hz → 4400Hz` 双脉冲滑音) |
-| 🐞 **Ladybugs** | **荧光飞虫** | 荧光黄绿甲壳、深色斑点、6 条摆动小腿、双触角、高频扇动透明薄翼 | 蜿蜒曲线爬行、原地振翅引诱；拍中爆裂荧光绿甲壳碎屑粒子 | 调幅高频虫鸣脉冲 (`1800Hz → 3100Hz` 颤音) |
-| 🔵 **Cat Laser** | **电光逗猫棒** | 亮青外环 + 明黄核心 + 纯白高光点 + 8 段动态衰减残影拖尾 | 极速折线变向、屏幕中心急停微颤挑逗；拍中释放双环电光冲击波 | 超高频电子啾鸣声 (`3200Hz → 1400Hz` 指数滑音) |
-| 🪶 **Feather Wand** | **逗猫仙女棒** | 弯曲羽轴、明黄金属铃铛、亮青丝带与三簇层叠渐变羽毛 | 大弧线飘荡与空中悬停颤动；拍中漫天飘散慢速旋转的羽毛粒子 | 清脆双泛音金属铃铛谐振 (`2637Hz E7 + 3951Hz B7`) |
+| 🐟 **Koi Pond** | **Koi Fish** | Streamlined body, pectoral fins, high-contrast eyes, dorsal spots, and sine-wave articulated tail fin | Graceful cruising with startled burst sprints; dual water ripples and rising bubble particles on hit | Band-pass water splash + rising bubble pitch sweep (`520Hz → 1500Hz`) |
+| 🐭 **Scurrying Mice** | **Rodent** | Teardrop body, inner ears, cyan nose tip, 6 high-frequency twitching whiskers, and S-curve segmented tail | Authentic rodent "freeze & twitch whiskers → explosive dart" gait; bursts into yellow/cyan sparks | High-frequency FM dual-pulse squeak (`2900Hz → 4400Hz` pitch glide) |
+| 🐞 **Ladybugs** | **Glow Beetle** | Chartreuse carapace, dark spots, 6 walking legs, dual antennae, and translucent fluttering wings | Winding crawls with stationary wing-flutter teasing; shatters into glowing shell fragments on catch | Amplitude-modulated insect wing buzz (`1800Hz → 3100Hz` tremolo) |
+| 🔵 **Cat Laser** | **Electric Dot** | Cyan outer halo + bright yellow core + pure white specular center + 8-segment decaying trail | Ultra-fast zig-zag ricochets and center-screen micro-jitters; releases dual shockwave rings | Ultrasonic-inspired electronic chirp (`3200Hz → 1400Hz` exponential sweep) |
+| 🪶 **Feather Wand** | **Plume Teaser** | Curved quill shaft, golden bell, cyan ribbons, and 3 layered gradient feather plumes | Wide sweeping arcs and mid-air hovering tremors; scatters slowly rotating feathers on pounce | Crisp dual-overtone metallic bell chime (`2637Hz E7 + 3951Hz B7`) |
 
-> 💡 **自动轮换机制**：默认开启 **90 秒自动切换模式**，当猫咪对单一猎物产生适应性疲劳前自动变换视觉与听觉刺激，保持持久好奇心。
+> 💡 **Anti-Habituation Auto-Cycle**: By default, CatToy automatically rotates modes every **90 seconds** to refresh visual and acoustic stimulation before sensory fatigue sets in.
 
 ---
 
-### 3. 仿生猎物行为状态机（Bio-Inspired Prey State Machine）
+### 3. Bio-Inspired Prey State Machine (`CatBehaviorEngine`)
 
-猫咪的捕猎本能由**“静止观察（蹲伏摇屁股）→ 突发扑咬”**驱动。如果屏幕上的物体只是机械地匀速移动，猫咪很快就会失去兴趣。`CatBehaviorEngine` 为每个猎物实现了独立的四阶段状态机：
+A cat's predatory instinct is driven by the **"Stalk & Freeze (Butt-Wiggle) → Sudden Pounce"** cycle. Targets that move at a constant speed quickly bore cats. `CatBehaviorEngine` drives an independent 4-stage state machine for each prey entity:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Peeking : 从屏幕四边随机生成
-    Peeking --> Moving : 探出半个身子微颤 0.7s 后窜入场内
-    Moving --> Pausing : 随机游走后突然急停
-    Moving --> Peeking : 靠近屏幕边缘时偶发躲回边缘探头
-    Pausing --> Darting : 原地抖动胡须/翅膀引诱猫咪后突然爆发冲刺
-    Darting --> Pausing : 冲刺结束急停喘息 + 触发挑逗音效
-    Darting --> Moving : 恢复巡航
-    Moving --> Darting : 猫爪拍偏 (Near-Miss) 受惊向开阔处逃逸
-    Pausing --> Darting : 猫爪拍偏 (Near-Miss) 受惊向开阔处逃逸
+    [*] --> Peeking : Spawns along screen edges
+    Peeking --> Moving : Peeks half-body & trembles for 0.7s before entering
+    Moving --> Pausing : Abruptly freezes after cruising
+    Moving --> Peeking : Occasionally retreats to screen edge to peek
+    Pausing --> Darting : Twitches whiskers/wings to tease, then bursts forward
+    Darting --> Pausing : Ends sprint with sudden stop + acoustic tease
+    Darting --> Moving : Resumes normal cruising
+    Moving --> Darting : Startles away from near-miss paw swipes
+    Pausing --> Darting : Startles away from near-miss paw swipes
 ```
 
-- **边缘探头（Peek-a-boo）**：猎物刷新或靠近屏幕边缘时，会先露出半个脑袋原地微颤，完美模拟躲在沙发缝隙或洞口窥探的小动物。
-- **墙角防卡死反射算法（Corner-Escape Steering）**：当猫爪连续在屏幕边缘滑动追赶（`touchesMoved`）时，引擎内置 `0.14s` 受惊冷却与向心偏转算法，猎物会沿着墙壁或向屏幕中央开阔地带逃窜，绝不会卡死在屏幕死角。
+- **Edge Peek-a-Boo**: When spawning or nearing screen borders, prey peek half their head out and tremble in place, mimicking small creatures hiding behind furniture gaps.
+- **Corner-Escape Steering**: When a cat chases prey into corners (`touchesMoved`), a `0.14s` startle cooldown and centripetal steering vector deflect the prey toward open center space so it never gets trapped in corners.
 
 ---
 
-### 4. 猫爪多点触控与防误触安全设计
+### 4. Multi-Paw Ergonomics & Cat-Proof Parental Lock
 
-- **🐾 多爪并发与肉垫宽容判定**：
-  - 同时支持 **最多 10 个触控点**（`isMultipleTouchEnabled = true`），兼容多只猫咪同时围观拍打。
-  - 支持**点按拍击（Tap/Pounce）**与**连续挥爪滑抓（Swipe）**两种捕获方式。
-  - 考虑到猫爪肉垫面积较大且落点存在偏差，碰撞判定半径在猎物视觉尺寸基础上额外扩大 **`+38pt`（滑抓 `+44pt`）**，确保猫咪每次果断出爪都能获得即时的正反馈。
-- **🔒 2.5 秒长按防误触家长锁（Cat-Proof Parental Lock）**：
-  - 屏幕右上角设有一个低调的半透明锁形按钮。
-  - **短按与多爪踩踏完全免疫**：猫咪踩到按钮只会触发普通涟漪，而且在人类手指按住期间若有猫爪踩到锁按钮，不会打断或重置人类的解锁进度。
-  - **长按 2.5 秒解锁**：只有人类手指持续按住 2.5 秒并走完环形进度条，才会弹出设置面板（切换 5 种猎物模式、调节同屏猎物数量 `1~5`、开关 90 秒自动轮换、静音开关、清零计分）。
-- **🛡️ 系统手势防护与屏幕常亮**：
-  - 启动即激活 `UIApplication.shared.isIdleTimerDisabled = true`，防止猫咪盯梢观察时 iPad 自动息屏。
-  - 开启 `preferredScreenEdgesDeferringSystemGestures = .all` 与 `prefersHomeIndicatorAutoHidden = true`，防止猫爪在屏幕边缘扒拉时误触返回主屏幕。
+- **🐾 10-Paw Concurrency & Paw-Pad Hitbox Forgiveness**:
+  - Supports **up to 10 simultaneous touches** (`isMultipleTouchEnabled = true`) for multi-cat households.
+  - Supports both direct **Pounce Taps** and continuous **Paw Swipes**.
+  - Because cat paw pads are broad and strike with slight offsets, hitboxes expand by **`+38pt` (`+44pt` on swipes)** beyond the visual sprite radius so every decisive pounce is rewarded.
+- **🔒 2.5-Second Cat-Proof Parental Lock**:
+  - A subtle translucent lock button sits in the top-right corner.
+  - **Immune to accidental paw steps**: Short taps or extra paws stepping on the screen only spawn water ripples and never interrupt an active human hold.
+  - **2.5s Continuous Hold**: Only a continuous 2.5-second human finger hold completes the circular progress ring and opens the Parental Control Center (switch modes, adjust prey count `1–5`, toggle 90s auto-cycle, mute audio, or reset score).
+- **🛡️ System Gesture Deferral & WakeLock**:
+  - Activates `UIApplication.shared.isIdleTimerDisabled = true` (and Screen Wake Lock API on Web) so the screen never dims while your cat is stalking.
+  - Enables `preferredScreenEdgesDeferringSystemGestures = .all` and `prefersHomeIndicatorAutoHidden = true` to prevent accidental Home bar swipes.
 
 ---
 
-## 📂 项目目录结构
+## 📂 Repository Structure
 
 ```text
 cattoy/
-├── CatToy.xcodeproj/          # 原生 iOS / iPadOS Xcode 工程 (Deployment Target: iOS 13.0+)
+├── CatToy.xcodeproj/          # Native iOS / iPadOS Xcode Project (Deployment Target: iOS 13.0+)
 │   └── project.pbxproj
-├── CatToy/                    # 原生 Swift 源码目录
-│   ├── AppDelegate.swift      # 应用生命周期与屏幕常亮控制
-│   ├── GameViewController.swift # SKView 120Hz 配置、多点触控与系统边缘手势防护
-│   ├── CatGameScene.swift     # SpriteKit 主场景、多爪碰撞、粒子特效与家长锁面板
-│   ├── CatBehaviorEngine.swift # 独立可测试的仿生运动 AI 状态机、色彩与家长锁逻辑
-│   ├── PreyNode.swift         # 5 种猎物的多段矢量图形与骨骼动画节点
-│   ├── CatAudioSynth.swift    # 基于 AVAudioEngine 的零素材实时 PCM 高频音效合成器
-│   └── Info.plist             # 全屏、横竖屏自适应与设备族配置
-├── web/                       # 免签名 100% 离线全屏 WebClip / PWA 引擎
-│   ├── index.html             # 单文件零依赖 Canvas + WebAudio 完整游戏引擎
-│   ├── icon.png               # 猫咪视觉高对比度桌面图标
-│   └── CatToy.mobileconfig    # 双模全屏桌面应用描述文件 (含局域网版 + Base64 纯离线版)
+├── CatToy/                    # Native Swift Source Code
+│   ├── AppDelegate.swift      # App lifecycle & idle timer (keep-screen-awake) control
+│   ├── GameViewController.swift # SKView 120Hz setup, multi-touch & system edge-gesture deferral
+│   ├── CatGameScene.swift     # SpriteKit main scene, multi-paw hit testing, particles & parental lock UI
+│   ├── CatBehaviorEngine.swift # Standalone testable bio-AI state machine, palette & parental lock logic
+│   ├── PreyNode.swift         # Multi-segment procedural vector graphics & skeletal animation nodes
+│   ├── CatAudioSynth.swift    # Zero-asset real-time PCM high-frequency synthesizer via AVAudioEngine
+│   └── Info.plist             # Fullscreen, orientation & device family configuration
+├── web/                       # Zero-dependency 100% Offline Fullscreen WebClip / PWA Engine
+│   ├── index.html             # Single-file Canvas + WebAudio game engine
+│   ├── manifest.webmanifest   # Fullscreen standalone PWA Web App Manifest
+│   ├── sw.js                  # Offline-first Service Worker cache
+│   ├── icon.png               # High-contrast feline-vision home screen icon
+│   └── CatToy.mobileconfig    # Dual-mode iPadOS fullscreen WebClip profile (Online + 100% Embedded Offline)
 ├── Tests/
-│   └── CatToyTests.swift      # 746 项断言的自动化单元测试套件
-└── install_to_ipad.sh         # 一键 USB 真机推送 / 局域网服务 / 自动化测试脚本
+│   └── CatToyTests.swift      # Automated unit test suite with 746 assertions
+└── install_to_ipad.sh         # One-click USB iPad installer / LAN server / automated test runner
 ```
 
 ---
 
-## 🚀 快速安装与运行指南
+## 🚀 Quick Start & Installation
 
-本项目提供 **3 种安装与运行方式**，兼容从老款 iPad（如 iPadOS 13~16）到最新款 M 系列 iPad Pro。
+CatToy supports **4 ways to play and install**, compatible with everything from older iPads (iPadOS 13–16) to the latest M-series iPad Pro.
 
-### 方式一：USB 一键推送全屏离线桌面应用（推荐 · 免开发者证书 · 永不过期）
+### Option 1: Play Instantly Online (Zero Setup)
+Open **[https://playcattoy.com/play/](https://playcattoy.com/play/)** in Safari on your iPad, tap **Share → Add to Home Screen**, and launch from the Home Screen for 100% fullscreen offline-capable play.
 
-无需登录 Apple ID，也无需担心免费开发者证书 7 天过期问题。将 iPad 通过 USB 连接 Mac 并点击「信任此电脑」，在终端运行：
+### Option 2: One-Click USB Push to iPad (No Apple Developer Account · Never Expires)
+No Apple ID sign-in required and no 7-day free certificate expiration. Connect your iPad to your Mac via USB, trust the computer, and run:
 
 ```bash
 ./install_to_ipad.sh
 ```
 
-脚本会通过 macOS 底层 `MobileDevice.framework` (`com.apple.mobile.MCInstall`) 直接将应用包推送至你的 iPad：
-1. 打开 iPad 上的 **「设置 (Settings)」**，点击左侧栏顶部的 **「已下载描述文件 (Profile Downloaded)」**。
-2. 点击右上角 **「安装 (Install)」**。
-3. 返回 iPad 桌面，即可看到两个全屏应用图标：
-   - **🐾 喵喵离线版**：完整游戏引擎已内嵌在图标内，**断开 USB 与 Wi-Fi 也能 100% 全屏运行，且永不过期**。
-   - **🐾 喵喵捕猎**：连接局域网服务运行（可通过 `./install_to_ipad.sh --web` 启动）。
+The script uses macOS `MobileDevice.framework` (`com.apple.mobile.MCInstall`) to push the fullscreen WebClip profile directly to your iPad:
+1. Open **Settings** on your iPad and tap **Profile Downloaded** near the top of the sidebar.
+2. Tap **Install** in the top-right corner.
+3. Return to your iPad Home Screen to find two fullscreen app icons:
+   - **🐾 CatToy Offline**: The entire game engine is embedded inside the icon payload via Base64 — **runs 100% fullscreen with Wi-Fi and USB disconnected, and never expires**.
+   - **🐾 CatToy**: Connects to your online or LAN server.
 
-### 方式二：Xcode 原生编译安装 (`CatToy.xcodeproj`)
+### Option 3: Build Native SpriteKit App in Xcode (`CatToy.xcodeproj`)
+1. Open `CatToy.xcodeproj` in Xcode on macOS.
+2. Under **Signing & Capabilities**, select your Apple ID Team.
+3. Select your connected iPad and press **`Cmd + R`** to build and run.
 
-如果你希望安装原生 `SpriteKit` 编译包：
-1. 在 Mac 上使用 Xcode 打开 `CatToy.xcodeproj`。
-2. 进入 **Signing & Capabilities**，在 **Team** 中选择你的 Apple ID。
-3. 选择顶部已连接的 iPad，按下 **`Cmd + R`** 编译并运行。
-
-### 方式三：局域网 Safari / PWA 即开即玩
-
+### Option 4: Local LAN Web Server
 ```bash
 ./install_to_ipad.sh --web
 ```
 
-在 iPad 的 Safari 浏览器访问终端提示的局域网地址（例如 `http://192.168.1.9:8765`），点击 Safari 顶部的 **「分享 -> 添加到主屏幕」**，即可从桌面全屏启动。
-
 ---
 
-## 🧪 自动化测试
+## 🧪 Automated Unit Tests
 
-项目内置了针对猎物 AI 状态机、墙角逃逸反射、多爪碰撞判定、家长锁并发防误触、90 秒自动轮换以及 `AVAudioEngine` 多声道 PCM 波形合成器的完整测试套件（共 **746 项断言**）：
+The repository includes a comprehensive test suite covering the prey AI state machine, corner-escape steering, multi-paw collision math, concurrent parental lock immunity, 90-second auto-cycling, and `AVAudioEngine` procedural PCM synthesis (**746 assertions**):
 
 ```bash
 ./install_to_ipad.sh --test
 ```
 
-输出示例：
+Example output:
 ```text
-🧪 正在编译并运行自动化单元测试套件 (CatToyTests)...
+🧪 Compiling and running automated unit test suite (CatToyTests)...
 🐾 Running CatToy Automated Test Suite...
 ✅ Assertions Passed: 746, Failed: 0
 ```
 
 ---
 
-## 💡 给铲屎官的使用小贴士
+## 💡 Tips for Cat Owners
 
-1. **开启 iPad「引导式访问」更安心**：如果家里猫咪动作特别猛烈，可以在 iPad **「设置 -> 辅助功能 -> 引导式访问」** 中开启引导式访问，进入游戏后连按三下电源键即可彻底锁定在当前应用内。
-2. **配合真实零食奖励**：在猫咪玩耍 10~15 分钟、成功拍中若干猎物后，给猫咪一点冻干或零食奖励，能形成完整的“搜寻 → 扑咬 → 进食”捕猎闭环，避免猫咪产生挫败感。
-3. **调高 iPad 音量**：游戏内置的实时合成吱吱声、虫鸣与水花声是吸引猫咪注意力的关键，建议将 iPad 媒体音量调至 50% 以上并将 iPad 平放在地毯或防滑垫上。
+1. **Enable iPad Guided Access for Heavy Pouncers**: Go to **Settings → Accessibility → Guided Access** on your iPad and triple-click the top button inside the game to lock the iPad strictly to CatToy.
+2. **Reward with Real Treats**: After 10–15 minutes of hunting and catching virtual prey, offer your cat a freeze-dried treat or snack to complete the natural *"Search → Stalk → Pounce → Consume"* predatory cycle.
+3. **Turn Up the Volume**: The real-time synthesized squeaks, splashes, and wing buzzes are crucial acoustic triggers — set your iPad volume above 50% and place the iPad flat on a non-slip mat or rug.
 
 ---
 
